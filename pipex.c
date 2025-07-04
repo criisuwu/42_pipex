@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
+/*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:39:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/03 15:20:45 by codespace        ###   ########.fr       */
+/*   Updated: 2025/07/04 13:02:20 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,22 @@ int main(int argc, char **argv, char **envp)
         printf("ERROR\n"); //TODO tiene que tener su correspondiente salida de error
         exit(1);
     }
+    if (pipe(pipe_fd) == -1)
+    {
+        perror("Error en la pipe\n");
+        exit(1);
+    }
     pid = fork();
     if (pid == -1)
     {
-        perror("Error en el fork");
+        perror("Error en el fork\n");
         exit(1);
     }
     if (pid == 0)
     {
         close(pipe_fd[0]);
-        dup2(pipe_pid[1], STDOUT_FILENO);
+        dup2(pipe_fd[1], STDOUT_FILENO);
+        close(pipe_fd[1]);
     }
     return (0);
 }
