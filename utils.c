@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:26:50 by chomobon          #+#    #+#             */
-/*   Updated: 2025/07/08 18:45:04 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/08 18:59:41 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void parent_proc(int *pipe_fd, char **argv, char **envp)
     if (dup2(file_fd, STDOUT_FILENO) == -1)
         ft_err();
     close(pipe_fd[0]);
-    ex_cmd(argv[3], envp);
+    ex_cmd(&argv[3], envp);
 }
 
 //Gestiono el archivo a abrir para el hijo
@@ -44,7 +44,7 @@ void child_proc(int *pipe_fd, char **argv, char **envp)
     if (dup2(file_fd, STDOUT_FILENO) == -1)
         ft_err();
     close(pipe_fd[1]);
-    ex_cmd(argv[2], envp);
+    ex_cmd(&argv[2], envp);
 }
 
 //Ejecuto el comando recibido en el arg
