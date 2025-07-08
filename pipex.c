@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:39:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/08 15:45:54 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:22:53 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,37 +15,48 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-
-//Aqui tengo que gestioanar el path, el abrir el archivo y ejecutar el archivo
-char *procces_cmd(char *argv, char **envp)
+char **get_path(char **envp)
 {
-    char **path;
-    char **c_path;
-    char *cmd;
-    char *join_path;
     char *l_path;
-    int i;
-    int j;
+    char **c_path;
+    char **path;
+    int i = 0;
     
-    i = 0;
     while (envp[i] != NULL)
     {
         if (ft_strncmp("PATH", envp[i], 6))
         {
-            l_path = ft_strdup(envp[i]); //Free despues
+            l_path = ft_strdup(envp[i]);
             break;
         }
         i++;
     }
     c_path = ft_split(l_path, '=');
+    free(l_path);
     path = ft_split(c_path[1], ':');
     i = 0;
-    j = 0;
-    while (path[i] != NULL)
+    while (path != NULL)
     {
-        cmd = ft_strjoin(path[i], "/");
+        free(c_path[i]);
+        i++;
+    }
+    return (path);
+}
+
+//Aqui tengo que gestioanar el path, el abrir el archivo y ejecutar el archivo
+char *procces_cmd(char **procces_text, char *argv)
+{
+    char *cmd;
+    char *join_path;
+    int i;
+    int j;
+    
+    i = 0;
+    j = 0;
+    while (procces_text[i] != NULL)
+    {
+        cmd = ft_strjoin(procces_text[i], "/");
         join_path = ft_strjoin(cmd, argv);
-        //Compruebo si existe ejecutable
         if (access(join_path, X_OK))
         {
             break;
@@ -63,18 +74,14 @@ char *procces_cmd(char *argv, char **envp)
         free(l_path);
         free(cmd);
         free(join_path);
-        
-        // ! si no existe libero y paso a la siguiente linea
-        // ? si existe paro y lo devuelvo :)
     }
     return(join_path);
-    //open();
-    
 }
 
 int main(int argc, char **argv, char **envp)
 {
     char *exe;
+    char **procces_text;
     int pipe_fd[2];
     pid_t pid;
     pid_t pid_parent;
@@ -100,9 +107,10 @@ int main(int argc, char **argv, char **envp)
         dup2(pipe_fd[0], STDOUT_FILENO); //to look
         //close(pipe_fd[1]);
         //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
-        exe = procces_cmd(argv[1], envp);
-        for (int i = 0; exe != NULL; i++)
-            printf("%s\n", exe);
+        procces_text = get_path(envp);
+        exe = procces_cmd(procces_text, argv[1]);
+        // for (int i = 0; exe != NULL; i++)
+        //     printf("%s\n", exe);
         exit(1);
     }
     else //Cualquier otro pid es el proceso del padre
@@ -119,23 +127,4 @@ int main(int argc, char **argv, char **envp)
         //     printf("%c\n", exe[i]);
         exit(1);
     }
-    
-    // pid = fork();
-    // if (pid == -1)
-    // {
-    //     perror("Error en el fork\n");
-    //     return(1);
-    // }
-    // if (pid == 0)
-    // {
-    //     printf("hell");
-    //     close(pipe_fd[0]);
-    //     dup2(pipe_fd[1], STDOUT_FILENO);
-    //     close(pipe_fd[1]);
-    //     printf("antes de procesar los argumentos");
-    //     //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
-    //     procces_args(*argv, envp);
-    //     exit(1);
-    // }
-    // return (0);
 }
