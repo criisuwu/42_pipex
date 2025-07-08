@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:39:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/08 16:50:05 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/08 17:41:41 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ char **get_path(char **envp)
     char *l_path;
     char **c_path;
     char **path;
-    int i = 0;
-    
+    int i;
+
+    i = 0;
     while (envp[i] != NULL)
     {
-        if (ft_strncmp("PATH", envp[i], 6))
+        if (ft_strncmp("PATH", envp[i], 4) == 0)
         {
             l_path = ft_strdup(envp[i]);
             break;
@@ -49,16 +50,12 @@ char *procces_cmd(char **procces_text, char *argv)
     char *cmd;
     char *join_path;
     int i;
+    int j = 0;
     
     i = 0;
     while (procces_text[i] != NULL)
     {
-        cmd = ft_strjoin(procces_text[i], "/");
-        while (procces_text[i] != NULL)
-        {
-            free (procces_text[i]);
-            i++;
-        } 
+        cmd = ft_strjoin(procces_text[i], "/"); 
         join_path = ft_strjoin(cmd, argv);
         if (access(join_path, X_OK))
         {
@@ -75,7 +72,6 @@ int main(int argc, char **argv, char **envp)
     char *exe;
     char **procces_text;
     int pipe_fd[2];
-    pid_t pid;
     pid_t pid_parent;
     
     if (argc < 3)
@@ -88,18 +84,19 @@ int main(int argc, char **argv, char **envp)
         return(1);
     }
     pid_parent = fork();
-    if (pid_parent == -1) //si da error en la crecion del hijo
+    if (pid_parent == -1)
     {
         perror("Error en el fork\n");
         return(1);
     }
     if (pid_parent == 0) //El proceso hijo, ejecuto el primer comando
     {
+        char **cmd_args = ft_split(argv[1], ' ');
         close(pipe_fd[0]); //to look
         dup2(pipe_fd[0], STDOUT_FILENO); //to look
-        //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
-        procces_text = get_path(envp);
-        exe = procces_cmd(procces_text, argv[1]);
+        procces_text = get_path(envp); //proceso la variable env
+        exe = procces_cmd(procces_text, argv[1]); //Compruebo que existe el comando
+        execve(exe, cmd_args, envp); //Ejecuto el primer comando que ya se que existe
         exit(1);
     }
     else //Cualquier otro pid es el proceso del padre
@@ -109,8 +106,6 @@ int main(int argc, char **argv, char **envp)
         close(pipe_fd[0]);
         dup2(pipe_fd[1], STDOUT_FILENO);
         close(pipe_fd[1]);
-        printf("antes de procesar los argumentos");
-        //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
         //exe = procces_cmd(argv[1], envp);
         exit(1);
     }
