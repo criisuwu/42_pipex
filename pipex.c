@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:39:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/08 16:22:53 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/08 16:50:05 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char **get_path(char **envp)
     free(l_path);
     path = ft_split(c_path[1], ':');
     i = 0;
-    while (path != NULL)
+    while(c_path[i])
     {
         free(c_path[i]);
         i++;
@@ -49,29 +49,21 @@ char *procces_cmd(char **procces_text, char *argv)
     char *cmd;
     char *join_path;
     int i;
-    int j;
     
     i = 0;
-    j = 0;
     while (procces_text[i] != NULL)
     {
         cmd = ft_strjoin(procces_text[i], "/");
+        while (procces_text[i] != NULL)
+        {
+            free (procces_text[i]);
+            i++;
+        } 
         join_path = ft_strjoin(cmd, argv);
         if (access(join_path, X_OK))
         {
             break;
         }
-        while(path[j])
-        {
-            free(path);
-            i++;
-        }
-        while(c_path[j])
-        {
-            free(c_path);
-            i++;
-        }
-        free(l_path);
         free(cmd);
         free(join_path);
     }
@@ -105,12 +97,9 @@ int main(int argc, char **argv, char **envp)
     {
         close(pipe_fd[0]); //to look
         dup2(pipe_fd[0], STDOUT_FILENO); //to look
-        //close(pipe_fd[1]);
         //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
         procces_text = get_path(envp);
         exe = procces_cmd(procces_text, argv[1]);
-        // for (int i = 0; exe != NULL; i++)
-        //     printf("%s\n", exe);
         exit(1);
     }
     else //Cualquier otro pid es el proceso del padre
@@ -122,9 +111,7 @@ int main(int argc, char **argv, char **envp)
         close(pipe_fd[1]);
         printf("antes de procesar los argumentos");
         //Procesamos los argumentos que recibe. Es decir hacemos de primeras un split.
-        exe = procces_cmd(argv[1], envp);
-        // for (int i = 0; exe != NULL; i++)
-        //     printf("%c\n", exe[i]);
+        //exe = procces_cmd(argv[1], envp);
         exit(1);
     }
 }
