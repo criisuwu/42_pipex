@@ -6,20 +6,20 @@
 #    By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 17:58:50 by chomobon          #+#    #+#              #
-#    Updated: 2025/07/11 12:11:39 by chomobon         ###   ########.fr        #
+#    Updated: 2025/07/11 13:13:16 by chomobon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 SRC = pipex.c utils.c
 
-OBJS = $(SRC: .c=.o)
+OBJS = $(SRC:.c=.o)
 
 LIBFT = libft
 LIBFT_LIB = libft/libft.a
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
 RM = rm -f
 

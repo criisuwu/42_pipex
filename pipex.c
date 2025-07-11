@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:39:30 by codespace         #+#    #+#             */
-/*   Updated: 2025/07/08 18:52:32 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:55:17 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,13 @@ char *procces_cmd(char **procces_text, char *argv)
     {
         cmd = ft_strjoin(procces_text[i], "/"); 
         join_path = ft_strjoin(cmd, argv);
-        if (access(join_path, X_OK))
+        if (access(join_path, X_OK) == 0)
         {
             break;
         }
         free(cmd);
         free(join_path);
+        i++;
     }
     return(join_path);
 }
@@ -75,7 +76,7 @@ int main(int argc, char **argv, char **envp)
     pid_t pid;
     pid_t pid_parent;
     
-    if (argc < 5 || pipe(pipe_fd) == -1)
+    if (argc != 5 || pipe(pipe_fd) == -1)
         ft_err();
     pid = fork();
     if (pid == -1)
