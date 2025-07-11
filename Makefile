@@ -6,12 +6,12 @@
 #    By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/08 17:58:50 by chomobon          #+#    #+#              #
-#    Updated: 2025/07/08 18:02:51 by chomobon         ###   ########.fr        #
+#    Updated: 2025/07/11 12:11:39 by chomobon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
-SRC = pipex.c
+SRC = pipex.c utils.c
 
 OBJS = $(SRC: .c=.o)
 

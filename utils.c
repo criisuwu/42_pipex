@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 18:26:50 by chomobon          #+#    #+#             */
-/*   Updated: 2025/07/08 18:59:41 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:24:30 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void parent_proc(int *pipe_fd, char **argv, char **envp)
     if (dup2(file_fd, STDOUT_FILENO) == -1)
         ft_err();
     close(pipe_fd[0]);
-    ex_cmd(&argv[3], envp);
+    ex_cmd(argv[3], envp);
 }
 
 //Gestiono el archivo a abrir para el hijo
@@ -44,19 +44,26 @@ void child_proc(int *pipe_fd, char **argv, char **envp)
     if (dup2(file_fd, STDOUT_FILENO) == -1)
         ft_err();
     close(pipe_fd[1]);
-    ex_cmd(&argv[2], envp);
+    ex_cmd(argv[2], envp);
 }
 
 //Ejecuto el comando recibido en el arg
-void ex_cmd(char **argv, char **envp)
+void ex_cmd(char *argv, char **envp)
 {
     char **cmd_args;
     char *exe;
     char **procces_text;
+    int i;
     
-    cmd_args = ft_split(argv[1], ' '); //tengo que hacer luego un free
+    i = 0;
+    cmd_args = ft_split(argv, ' '); //tengo que hacer luego un free
     procces_text = get_path(envp);
-    exe = procces_cmd(procces_text, argv[1]);
+    exe = procces_cmd(procces_text, argv);
     if (execve(exe, cmd_args, envp) == -1)
         ft_err();
+    while (cmd_args[i] != NULL)
+    {
+        free (cmd_args);
+        i++;
+    }
 }

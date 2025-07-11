@@ -6,7 +6,7 @@
 /*   By: chomobon <chomobon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/08 17:53:54 by chomobon          #+#    #+#             */
-/*   Updated: 2025/07/08 18:53:14 by chomobon         ###   ########.fr       */
+/*   Updated: 2025/07/11 12:12:43 by chomobon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 
 char **get_path(char **envp);
 char *procces_cmd(char **procces_text, char *argv);
-void ex_cmd(char **argv, char **envp);
+void ex_cmd(char *argv, char **envp);
 void child_proc(int *pipe_fd, char **argv, char **envp);
 void parent_proc(int *pipe_fd, char **argv, char **envp);
 void ft_err(void);
